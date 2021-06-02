@@ -1,5 +1,11 @@
 # Delete Workflow Runs
 
+Automatically delete old GitHub Action workflow runs
+
+![](.github/img/preview.mp4)
+
+By default, this userscript will keep the first (i.e. the latest) workflow run. The number of runs to preserve can be configured in the settings.
+
 ## Installation Guide
 
 1. Install a Userscript manager for your web browser
