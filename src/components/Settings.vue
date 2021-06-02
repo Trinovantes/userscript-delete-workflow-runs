@@ -1,49 +1,35 @@
 <template>
     <div class="group">
-        <h3>Example Settings</h3>
-
-        <label for="stringOption">
-            String Option
+        <label for="numWorkflowRunsToKeep">
+            Number of Workflow Runs to Keep
             <input
-                id="stringOption"
-                v-model="stringOption"
-                type="text"
-            >
-        </label>
-        <pre>"{{ stringOption }}" ({{ typeof stringOption }})</pre>
-
-        <label for="numberOption">
-            Number Option
-            <input
-                id="numberOption"
-                v-model.number="numberOption"
+                id="numWorkflowRunsToKeep"
+                v-model.number="numWorkflowRunsToKeep"
                 type="number"
             >
         </label>
-        <pre>"{{ numberOption }}" ({{ typeof numberOption }})</pre>
 
-        <label for="booleanOption">
-            Boolean Option
+        <label for="numDeletionsPerExecution">
+            Number of Deletions per Execution
             <input
-                id="booleanOption"
-                v-model="booleanOption"
-                type="checkbox"
+                id="numDeletionsPerExecution"
+                v-model.number="numDeletionsPerExecution"
+                type="number"
             >
         </label>
-        <pre>"{{ booleanOption }}" ({{ typeof booleanOption }})</pre>
     </div>
 
     <div class="group actions">
         <a
             class="btn positive"
-            @click="onSave"
+            @click="save(); $emit('close')"
         >
             Save
         </a>
         <div class="hspace" />
         <a
             class="btn"
-            @click="onClose"
+            @click="$emit('close')"
         >
             Cancel
         </a>
@@ -52,63 +38,42 @@
 
 <script lang="ts">
 import { Action, Mutation, useTypedStore } from '@/store'
-import { computed, defineComponent, onMounted } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
     emits: [
         'close',
     ],
 
-    setup(props, { emit }) {
+    setup() {
         const store = useTypedStore()
 
-        onMounted(async() => {
-            await store.dispatch(Action.LOAD, undefined)
-        })
-
-        const stringOption = computed({
+        const numWorkflowRunsToKeep = computed({
             get() {
-                return store.state.stringOption
-            },
-            set(val: string) {
-                store.commit(Mutation.SET_STRING_OPTION, val)
-            },
-        })
-
-        const numberOption = computed({
-            get() {
-                return store.state.numberOption
+                return store.state.numWorkflowRunsToKeep
             },
             set(val: number) {
-                store.commit(Mutation.SET_NUMBER_OPTION, val)
+                store.commit(Mutation.SET_NUM_WORKFLOW_RUNS_TO_KEEEP, val)
             },
         })
 
-        const booleanOption = computed({
+        const numDeletionsPerExecution = computed({
             get() {
-                return store.state.booleanOption
+                return store.state.numDeletionsPerExecution
             },
-            set(val: boolean) {
-                store.commit(Mutation.SET_BOOLEAN_OPTION, val)
+            set(val: number) {
+                store.commit(Mutation.SET_NUM_DELETIONS_PER_EXECUTION, val)
             },
         })
 
-        const onSave = async() => {
+        const save = async() => {
             await store.dispatch(Action.SAVE)
-            emit('close')
-        }
-
-        const onClose = () => {
-            emit('close')
         }
 
         return {
-            stringOption,
-            numberOption,
-            booleanOption,
-
-            onSave,
-            onClose,
+            numWorkflowRunsToKeep,
+            numDeletionsPerExecution,
+            save,
         }
     },
 })
@@ -141,16 +106,42 @@ label{
     cursor: pointer;
     font-weight: bold;
     gap: math.div($padding, 2);
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 2fr;
+
+    input{
+        font-weight: normal;
+
+        border: $border;
+        border-radius: $border-radius;
+        padding: math.div($padding, 4);
+
+        &:focus{
+            border-color: black;
+        }
+    }
 }
 
-input{
+a.btn{
+    background-color: white;
     border: $border;
     border-radius: $border-radius;
-    padding: math.div($padding, 4);
+    cursor: pointer;
+    display: inline-block;
+    padding: math.div($padding, 4) math.div($padding, 2);
+    text-decoration: none;
 
-    &:focus{
-        border-color: black;
+    &:hover{
+        background-color: #eee;
+    }
+
+    &.positive{
+        background-color: green;
+        border-color: darkgreen;
+        color: white;
+
+        &:hover{
+            background-color: darkgreen;
+        }
     }
 }
 </style>

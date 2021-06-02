@@ -1,4 +1,4 @@
-# Userscript Template
+# Delete Workflow Runs
 
 ## Installation Guide
 
@@ -6,7 +6,7 @@
     * [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) (Firefox)
     * [Tampermonkey](https://www.tampermonkey.net/) (Chrome, Firefox, Safari, Edge)
 
-2. [Download the latest build](https://github.com/Trinovantes/template-userscript/releases/download/latest/template-userscript.user.js). If you have Greasemonkey or Tampermonkey installed, then you should immediately be prompted with a confirmation window asking you if you wish to install this Userscript.
+2. [Download the latest build](https://github.com/Trinovantes/userscript-delete-workflow-runs/releases/download/latest/userscript-delete-workflow-runs.user.js). If you have Greasemonkey or Tampermonkey installed, then you should immediately be prompted with a confirmation window asking you if you wish to install this Userscript.
 
 ## Dev Guide
 
@@ -17,7 +17,7 @@
     * Tampermonkey on Chrome
 
 2. In Chrome:
-    
+
     * Go to `chrome://extensions/`
     * Go into Tampermonkey's details
     * Enable `Allow access to file URLs`
@@ -31,4 +31,4 @@
 
 4. In Chrome:
 
-    * Go to `http://localhost:8080/template-userscript.proxy.user.js` and install the script
+    * Go to `http://localhost:8080/userscript-delete-workflow-runs.proxy.user.js` and install the script

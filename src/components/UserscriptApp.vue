@@ -2,22 +2,34 @@
     <div class="userscript-app">
         <div v-if="isOpen" class="dialog-wrapper">
             <div class="dialog">
-                <hgroup>
-                    <h1>
-                        {{ title }}
-                    </h1>
-                    <h2>
-                        <a :href="projectUrl" class="url">
-                            {{ projectUrl }}
-                        </a>
-                    </h2>
-                </hgroup>
+                <h1>
+                    {{ title }}
+                </h1>
+                <a :href="projectUrl" class="url">
+                    {{ projectUrl }}
+                </a>
 
                 <Settings
                     @close="isOpen = false"
                 />
             </div>
         </div>
+
+        <a
+            v-if="numDeletionsLeft > 0"
+            class="stop-btn"
+            :title="`${numDeletionsLeft} deletions left`"
+            @click="stopDeleting"
+        >
+            Stop
+        </a>
+        <a
+            v-else
+            class="start-btn"
+            @click="startDeleting"
+        >
+            Start
+        </a>
 
         <a
             class="settings-btn"
@@ -30,8 +42,10 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue'
+import { Action, Mutation, useTypedStore } from '@/store'
+import { ref, defineComponent, onMounted, computed } from 'vue'
 import Settings from './Settings.vue'
+import { deleteWorkflowRuns } from '@/DeleteWorkflowRuns'
 
 export default defineComponent({
     components: {
@@ -41,16 +55,46 @@ export default defineComponent({
     setup() {
         const isOpen = ref(false)
 
+        const store = useTypedStore()
+        const numDeletionsLeft = computed(() => store.state._numDeletionsLeft)
+        const run = async() => {
+            if (numDeletionsLeft.value < 1) {
+                console.info(DEFINE.NAME, 'No runs left to run')
+                return
+            }
+
+            await deleteWorkflowRuns(store.state.numWorkflowRunsToKeep, async() => {
+                store.commit(Mutation.SET_NUM_DELETIONS_LEFT, numDeletionsLeft.value - 1)
+                await store.dispatch(Action.SAVE)
+            })
+        }
+
+        const stopDeleting = async() => {
+            store.commit(Mutation.SET_NUM_DELETIONS_LEFT, 0)
+            await store.dispatch(Action.SAVE)
+        }
+
+        const startDeleting = async() => {
+            store.commit(Mutation.SET_NUM_DELETIONS_LEFT, store.state.numDeletionsPerExecution)
+            await store.dispatch(Action.SAVE)
+            await run()
+        }
+
+        onMounted(run)
+
         return {
             title: `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`,
             projectUrl: DEFINE.REPO.url,
             isOpen,
+            numDeletionsLeft,
+            stopDeleting,
+            startDeleting,
         }
     },
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .userscript-app{
     *{
         background: none;
@@ -65,10 +109,6 @@ export default defineComponent({
         line-height: 1.5;
     }
 
-    strong{
-        font-weight: bold;
-    }
-
     a{
         color: blue;
         text-decoration: none;
@@ -78,43 +118,35 @@ export default defineComponent({
         }
     }
 
-    a.btn{
-        background-color: white;
-        border: $border;
-        border-radius: $border-radius;
-        cursor: pointer;
-        display: inline-block;
-        padding: math.div($padding, 4) math.div($padding, 2);
-        text-decoration: none;
-
-        &:hover{
-            background-color: #eee;
-        }
-
-        &.positive{
-            background-color: green;
-            border-color: darkgreen;
-            color: white;
-
-            &:hover{
-                background-color: darkgreen;
-            }
-        }
-    }
-
+    a.stop-btn,
+    a.start-btn,
     a.settings-btn{
         @extend .icon-btn;
 
-        background-image: url('@/assets/img/settings.png');
-        box-shadow: rgba(11, 11, 11, 0.1) 0 2px 8px;
-
         position: fixed;
-        bottom: $padding; right: $padding;
+        right: $padding;
         z-index: 9999;
+
+        box-shadow: rgba(11, 11, 11, 0.1) 0 2px 8px;
 
         &:hover{
             box-shadow: rgba(11, 11, 11, 0.4) 0 0px 8px;
         }
+    }
+
+    a.stop-btn{
+        background-image: url('@/assets/img/stop.png');
+        bottom: $padding + $btn-size + $padding + $btn-size + $padding;
+    }
+
+    a.start-btn{
+        background-image: url('@/assets/img/start.png');
+        bottom: $padding + $btn-size + $padding + $btn-size + $padding;
+    }
+
+    a.settings-btn{
+        background-image: url('@/assets/img/settings.png');
+        bottom: $padding + $btn-size + $padding;
     }
 
     .dialog-wrapper{
@@ -135,20 +167,14 @@ export default defineComponent({
             transform: translateY(-50%) translateX(-50%);
             min-width: $min-dialog-width;
 
-            hgroup{
-                margin-bottom: $padding;
-            }
-
             h1{
                 font-size: 24px;
                 font-weight: bold;
             }
 
-            h3 {
-                @extend .margins;
-
-                font-size: 21px;
-                font-weight: bold;
+            a.url{
+                display: block;
+                margin-bottom: $padding;
             }
         }
     }

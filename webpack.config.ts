@@ -119,15 +119,12 @@ const config: webpack.Configuration = {
             headers: {
                 name: packageJson.productName,
                 version: isDev
-                    ? '[version]-build.[buildNo]'
+                    ? '0.0.0'
                     : '[version]',
                 match: [
-                    'http://localhost:8080/*',
-                ],
-                connect: [
+                    'https://github.com/*',
                 ],
                 grant: [
-                    'GM.xmlHttpRequest',
                     'GM.getValue',
                     'GM.setValue',
                 ],

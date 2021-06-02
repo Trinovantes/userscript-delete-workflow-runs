@@ -7,16 +7,16 @@ import { KEY_STATE } from '@/Constants'
 // ----------------------------------------------------------------------------
 
 export interface State {
-    stringOption: string
-    numberOption: number
-    booleanOption: boolean
+    numWorkflowRunsToKeep: number
+    numDeletionsPerExecution: number
+    _numDeletionsLeft: number
 }
 
 function createDefaultState(): State {
     const defaultState: State = {
-        stringOption: '',
-        booleanOption: false,
-        numberOption: 0,
+        numWorkflowRunsToKeep: 1,
+        numDeletionsPerExecution: 10,
+        _numDeletionsLeft: 0,
     }
 
     return defaultState
@@ -28,16 +28,16 @@ function createDefaultState(): State {
 
 export enum Mutation {
     REPLACE_STATE = 'REPLACE_STATE',
-    SET_STRING_OPTION = 'SET_STRING_OPTION',
-    SET_NUMBER_OPTION = 'SET_NUMBER_OPTION',
-    SET_BOOLEAN_OPTION = 'SET_BOOLEAN_OPTION',
+    SET_NUM_WORKFLOW_RUNS_TO_KEEEP = 'SET_NUM_WORKFLOW_RUNS_TO_KEEEP',
+    SET_NUM_DELETIONS_PER_EXECUTION = 'SET_NUM_DELETIONS_PER_EXECUTION',
+    SET_NUM_DELETIONS_LEFT = 'SET_NUM_DELETIONS_LEFT',
 }
 
 interface Mutations {
     [Mutation.REPLACE_STATE]: (state: State, payload: State) => void
-    [Mutation.SET_STRING_OPTION]: (state: State, payload?: string) => void
-    [Mutation.SET_NUMBER_OPTION]: (state: State, payload?: number) => void
-    [Mutation.SET_BOOLEAN_OPTION]: (state: State, payload?: boolean) => void
+    [Mutation.SET_NUM_WORKFLOW_RUNS_TO_KEEEP]: (state: State, payload?: number) => void
+    [Mutation.SET_NUM_DELETIONS_PER_EXECUTION]: (state: State, payload?: number) => void
+    [Mutation.SET_NUM_DELETIONS_LEFT]: (state: State, payload?: number) => void
 }
 
 const mutations: MutationTree<State> & Mutations = {
@@ -49,28 +49,28 @@ const mutations: MutationTree<State> & Mutations = {
         Object.assign(state, payload)
     },
 
-    [Mutation.SET_STRING_OPTION]: (state: State, payload?: string) => {
+    [Mutation.SET_NUM_WORKFLOW_RUNS_TO_KEEEP]: (state: State, payload?: number) => {
         if (payload === undefined) {
             throw new Error('Missing Payload')
         }
 
-        state.stringOption = payload
+        state.numWorkflowRunsToKeep = payload
     },
 
-    [Mutation.SET_NUMBER_OPTION]: (state: State, payload?: number) => {
+    [Mutation.SET_NUM_DELETIONS_PER_EXECUTION]: (state: State, payload?: number) => {
         if (payload === undefined) {
             throw new Error('Missing Payload')
         }
 
-        state.numberOption = payload
+        state.numDeletionsPerExecution = payload
     },
 
-    [Mutation.SET_BOOLEAN_OPTION]: (state: State, payload?: boolean) => {
+    [Mutation.SET_NUM_DELETIONS_LEFT]: (state: State, payload?: number) => {
         if (payload === undefined) {
             throw new Error('Missing Payload')
         }
 
-        state.booleanOption = payload
+        state._numDeletionsLeft = payload
     },
 }
 
