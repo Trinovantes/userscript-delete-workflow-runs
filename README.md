@@ -2,7 +2,7 @@
 
 Automatically delete old GitHub Action workflow runs
 
-![](.github/img/preview.mp4)
+https://user-images.githubusercontent.com/458691/120520312-a298b580-c3a1-11eb-944d-b65dfa55b869.mp4
 
 By default, this userscript will keep the first (i.e. the latest) workflow run. The number of runs to preserve can be configured in the settings.
 
