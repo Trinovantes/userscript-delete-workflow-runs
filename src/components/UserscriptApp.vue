@@ -1,5 +1,5 @@
 <template>
-    <div class="userscript-app">
+    <div class="userscript-delete-workflow-runs">
         <div v-if="isOpen" class="dialog-wrapper">
             <div class="dialog">
                 <h1>
@@ -94,8 +94,8 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.userscript-app{
+<style lang="scss">
+.userscript-delete-workflow-runs{
     *{
         background: none;
         outline: none;
@@ -107,15 +107,6 @@ export default defineComponent({
         font-size: 15px;
         font-weight: normal;
         line-height: 1.5;
-    }
-
-    a{
-        color: blue;
-        text-decoration: none;
-
-        &:hover{
-            text-decoration: underline;
-        }
     }
 
     a.stop-btn,
@@ -175,6 +166,13 @@ export default defineComponent({
             a.url{
                 display: block;
                 margin-bottom: $padding;
+
+                color: blue;
+                text-decoration: none;
+
+                &:hover{
+                    text-decoration: underline;
+                }
             }
         }
     }

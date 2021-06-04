@@ -89,15 +89,6 @@ export default defineComponent({
     }
 }
 
-.actions{
-    display: flex;
-    gap: math.div($padding, 2);
-
-    .hspace{
-        flex: 1;
-    }
-}
-
 label{
     @extend .margins;
 
@@ -107,17 +98,26 @@ label{
     font-weight: bold;
     gap: math.div($padding, 2);
     grid-template-columns: 1fr 2fr;
+}
 
-    input{
-        font-weight: normal;
+input{
+    font-weight: normal;
 
-        border: $border;
-        border-radius: $border-radius;
-        padding: math.div($padding, 4);
+    border: $border;
+    border-radius: $border-radius;
+    padding: math.div($padding, 4);
 
-        &:focus{
-            border-color: black;
-        }
+    &:focus{
+        border-color: black;
+    }
+}
+
+.actions{
+    display: flex;
+    gap: math.div($padding, 2);
+
+    .hspace{
+        flex: 1;
     }
 }
 
