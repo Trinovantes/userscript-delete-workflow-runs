@@ -9,7 +9,7 @@
                     {{ projectUrl }}
                 </a>
 
-                <Settings
+                <UserscriptAppSettings
                     @close="isOpen = false"
                 />
             </div>
@@ -44,12 +44,12 @@
 <script lang="ts">
 import { Action, Mutation, useTypedStore } from '@/store'
 import { ref, defineComponent, onMounted, computed } from 'vue'
-import Settings from './Settings.vue'
+import UserscriptAppSettings from './UserscriptAppSettings.vue'
 import { deleteWorkflowRuns } from '@/DeleteWorkflowRuns'
 
 export default defineComponent({
     components: {
-        Settings,
+        UserscriptAppSettings,
     },
 
     setup() {
