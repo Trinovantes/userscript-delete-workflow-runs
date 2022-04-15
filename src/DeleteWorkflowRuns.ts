@@ -1,4 +1,5 @@
-import { isOnWorkflowsPage, waitForSelector } from './utils'
+import { isOnWorkflowsPage } from './utils/isOnWorkflowsPage'
+import { waitForSelector } from './utils/waitForSelector'
 
 export async function deleteWorkflowRuns(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>): Promise<void> {
     if (!isOnWorkflowsPage(window.location)) {
