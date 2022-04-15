@@ -38,10 +38,19 @@ export default defineComponent({
 
         onMounted(run)
 
+        const loadApp = ref(isOnWorkflowsPage(window.location.href))
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        window.history.pushState = new Proxy(window.history.pushState, {
+            apply: (target, thisArg, argArray: [unknown, string, string]) => {
+                loadApp.value = isOnWorkflowsPage(argArray[2])
+                return target.apply(thisArg, argArray)
+            },
+        })
+
         return {
             title: `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`,
             isOpen: ref(false),
-            isOnWorkflowsPage: isOnWorkflowsPage(window.location),
+            loadApp,
 
             numDeletionsLeft,
             stopDeleting,
@@ -53,7 +62,7 @@ export default defineComponent({
 
 <template>
     <div
-        v-if="isOnWorkflowsPage"
+        v-if="loadApp"
         class="userscript-delete-workflow-runs"
     >
         <div
