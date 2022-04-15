@@ -14,6 +14,8 @@ export default defineComponent({
         }
 
         return {
+            title: `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`,
+            projectUrl: DEFINE.REPO.url,
             store,
             save,
         }
@@ -22,60 +24,105 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="group">
-        <label for="numWorkflowRunsToKeep">
-            Number of Workflow Runs to Keep
-            <input
-                id="numWorkflowRunsToKeep"
-                v-model.number="store.numWorkflowRunsToKeep"
-                type="number"
-            >
-        </label>
+    <div class="settings">
+        <div class="group">
+            <h1>
+                {{ title }}
+            </h1>
+            <a :href="projectUrl" class="project-url">
+                {{ projectUrl }}
+            </a>
+        </div>
 
-        <label for="numDeletionsPerExecution">
-            Number of Deletions per Execution
-            <input
-                id="numDeletionsPerExecution"
-                v-model.number="store.numDeletionsPerExecution"
-                type="number"
-            >
-        </label>
-    </div>
+        <div class="group">
+            <label for="numWorkflowRunsToKeep">
+                Number of Workflow Runs to Keep
+                <input
+                    id="numWorkflowRunsToKeep"
+                    v-model.number="store.numWorkflowRunsToKeep"
+                    type="number"
+                >
+            </label>
 
-    <div class="group actions">
-        <a
-            class="btn positive"
-            @click="save(); $emit('close')"
-        >
-            Save
-        </a>
-        <div class="hspace" />
-        <a
-            class="btn"
-            @click="$emit('close')"
-        >
-            Cancel
-        </a>
+            <label for="numDeletionsPerExecution">
+                Number of Deletions per Execution
+                <input
+                    id="numDeletionsPerExecution"
+                    v-model.number="store.numDeletionsPerExecution"
+                    type="number"
+                >
+            </label>
+        </div>
+
+        <div class="group actions">
+            <a
+                class="btn positive"
+                @click="save(); $emit('close')"
+            >
+                Save
+            </a>
+            <div class="hspace" />
+            <a
+                class="btn"
+                @click="$emit('close')"
+            >
+                Cancel
+            </a>
+        </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.group{
-    border-top: $border;
-    padding: $padding 0;
+.settings{
+    display: grid;
+    gap: $padding;
+}
 
-    &:last-child{
-        padding-bottom: 0;
+.group{
+    display: grid;
+    gap: math.div($padding, 2);
+
+    &:not(:first-child){
+        border-top: $border;
+        padding-top: $padding;
+    }
+
+    &.actions{
+        display: flex;
+        gap: math.div($padding, 2);
+
+        .hspace{
+            flex: 1;
+        }
+    }
+}
+
+h1{
+    font-size: 24px;
+    font-weight: bold;
+}
+
+h2{
+    font-size: 21px;
+    font-weight: bold;
+}
+
+a.project-url{
+    display: block;
+    color: blue;
+    text-decoration: none;
+
+    &:hover{
+        text-decoration: underline;
     }
 }
 
 label{
-    @extend .margins;
+    cursor: pointer;
+    font-weight: bold;
 
     align-items: center;
     display: grid;
-    cursor: pointer;
-    font-weight: bold;
     gap: math.div($padding, 2);
     grid-template-columns: 1fr 2fr;
 }
@@ -89,15 +136,6 @@ input{
 
     &:focus{
         border-color: black;
-    }
-}
-
-.actions{
-    display: flex;
-    gap: math.div($padding, 2);
-
-    .hspace{
-        flex: 1;
     }
 }
 
