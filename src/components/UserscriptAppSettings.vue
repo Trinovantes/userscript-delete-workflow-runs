@@ -1,6 +1,6 @@
 <script lang="ts">
-import { Action, Mutation, useTypedStore } from '@/store'
-import { computed, defineComponent } from 'vue'
+import { useStore } from '@/store'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
     emits: [
@@ -8,33 +8,13 @@ export default defineComponent({
     ],
 
     setup() {
-        const store = useTypedStore()
-
-        const numWorkflowRunsToKeep = computed({
-            get() {
-                return store.state.numWorkflowRunsToKeep
-            },
-            set(val: number) {
-                store.commit(Mutation.SET_NUM_WORKFLOW_RUNS_TO_KEEEP, val)
-            },
-        })
-
-        const numDeletionsPerExecution = computed({
-            get() {
-                return store.state.numDeletionsPerExecution
-            },
-            set(val: number) {
-                store.commit(Mutation.SET_NUM_DELETIONS_PER_EXECUTION, val)
-            },
-        })
-
+        const store = useStore()
         const save = async() => {
-            await store.dispatch(Action.SAVE)
+            await store.save()
         }
 
         return {
-            numWorkflowRunsToKeep,
-            numDeletionsPerExecution,
+            store,
             save,
         }
     },
@@ -47,7 +27,7 @@ export default defineComponent({
             Number of Workflow Runs to Keep
             <input
                 id="numWorkflowRunsToKeep"
-                v-model.number="numWorkflowRunsToKeep"
+                v-model.number="store.numWorkflowRunsToKeep"
                 type="number"
             >
         </label>
@@ -56,7 +36,7 @@ export default defineComponent({
             Number of Deletions per Execution
             <input
                 id="numDeletionsPerExecution"
-                v-model.number="numDeletionsPerExecution"
+                v-model.number="store.numDeletionsPerExecution"
                 type="number"
             >
         </label>

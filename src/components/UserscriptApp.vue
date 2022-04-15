@@ -1,8 +1,8 @@
 <script lang="ts">
-import { Action, Mutation, useTypedStore } from '@/store'
 import { ref, defineComponent, onMounted, computed } from 'vue'
 import UserscriptAppSettings from './UserscriptAppSettings.vue'
 import { deleteWorkflowRuns } from '@/DeleteWorkflowRuns'
+import { useStore } from '@/store'
 
 export default defineComponent({
     components: {
@@ -10,30 +10,28 @@ export default defineComponent({
     },
 
     setup() {
-        const isOpen = ref(false)
-
-        const store = useTypedStore()
-        const numDeletionsLeft = computed(() => store.state._numDeletionsLeft)
+        const store = useStore()
+        const numDeletionsLeft = computed(() => store.numDeletionsLeft)
         const run = async() => {
             if (numDeletionsLeft.value < 1) {
                 console.info(DEFINE.NAME, 'No runs left to run')
                 return
             }
 
-            await deleteWorkflowRuns(store.state.numWorkflowRunsToKeep, async() => {
-                store.commit(Mutation.SET_NUM_DELETIONS_LEFT, numDeletionsLeft.value - 1)
-                await store.dispatch(Action.SAVE)
+            await deleteWorkflowRuns(store.numWorkflowRunsToKeep, async() => {
+                store.numDeletionsLeft = numDeletionsLeft.value - 1
+                await store.save()
             })
         }
 
         const stopDeleting = async() => {
-            store.commit(Mutation.SET_NUM_DELETIONS_LEFT, 0)
-            await store.dispatch(Action.SAVE)
+            store.numDeletionsLeft = 0
+            await store.save()
         }
 
         const startDeleting = async() => {
-            store.commit(Mutation.SET_NUM_DELETIONS_LEFT, store.state.numDeletionsPerExecution)
-            await store.dispatch(Action.SAVE)
+            store.numDeletionsLeft = store.numDeletionsPerExecution
+            await store.save()
             await run()
         }
 
@@ -42,7 +40,7 @@ export default defineComponent({
         return {
             title: `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`,
             projectUrl: DEFINE.REPO.url,
-            isOpen,
+            isOpen: ref(false),
             numDeletionsLeft,
             stopDeleting,
             startDeleting,
