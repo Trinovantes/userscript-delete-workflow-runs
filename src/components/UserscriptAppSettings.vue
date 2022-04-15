@@ -1,41 +1,3 @@
-<template>
-    <div class="group">
-        <label for="numWorkflowRunsToKeep">
-            Number of Workflow Runs to Keep
-            <input
-                id="numWorkflowRunsToKeep"
-                v-model.number="numWorkflowRunsToKeep"
-                type="number"
-            >
-        </label>
-
-        <label for="numDeletionsPerExecution">
-            Number of Deletions per Execution
-            <input
-                id="numDeletionsPerExecution"
-                v-model.number="numDeletionsPerExecution"
-                type="number"
-            >
-        </label>
-    </div>
-
-    <div class="group actions">
-        <a
-            class="btn positive"
-            @click="save(); $emit('close')"
-        >
-            Save
-        </a>
-        <div class="hspace" />
-        <a
-            class="btn"
-            @click="$emit('close')"
-        >
-            Cancel
-        </a>
-    </div>
-</template>
-
 <script lang="ts">
 import { Action, Mutation, useTypedStore } from '@/store'
 import { computed, defineComponent } from 'vue'
@@ -78,6 +40,44 @@ export default defineComponent({
     },
 })
 </script>
+
+<template>
+    <div class="group">
+        <label for="numWorkflowRunsToKeep">
+            Number of Workflow Runs to Keep
+            <input
+                id="numWorkflowRunsToKeep"
+                v-model.number="numWorkflowRunsToKeep"
+                type="number"
+            >
+        </label>
+
+        <label for="numDeletionsPerExecution">
+            Number of Deletions per Execution
+            <input
+                id="numDeletionsPerExecution"
+                v-model.number="numDeletionsPerExecution"
+                type="number"
+            >
+        </label>
+    </div>
+
+    <div class="group actions">
+        <a
+            class="btn positive"
+            @click="save(); $emit('close')"
+        >
+            Save
+        </a>
+        <div class="hspace" />
+        <a
+            class="btn"
+            @click="$emit('close')"
+        >
+            Cancel
+        </a>
+    </div>
+</template>
 
 <style lang="scss" scoped>
 .group{

@@ -1,46 +1,3 @@
-<template>
-    <div class="userscript-delete-workflow-runs">
-        <div v-if="isOpen" class="dialog-wrapper">
-            <div class="dialog">
-                <h1>
-                    {{ title }}
-                </h1>
-                <a :href="projectUrl" class="url">
-                    {{ projectUrl }}
-                </a>
-
-                <UserscriptAppSettings
-                    @close="isOpen = false"
-                />
-            </div>
-        </div>
-
-        <a
-            v-if="numDeletionsLeft > 0"
-            class="stop-btn"
-            :title="`${numDeletionsLeft} deletions left`"
-            @click="stopDeleting"
-        >
-            Stop
-        </a>
-        <a
-            v-else
-            class="start-btn"
-            @click="startDeleting"
-        >
-            Start
-        </a>
-
-        <a
-            class="settings-btn"
-            :title="title"
-            @click="isOpen = true"
-        >
-            Settings
-        </a>
-    </div>
-</template>
-
 <script lang="ts">
 import { Action, Mutation, useTypedStore } from '@/store'
 import { ref, defineComponent, onMounted, computed } from 'vue'
@@ -93,6 +50,49 @@ export default defineComponent({
     },
 })
 </script>
+
+<template>
+    <div class="userscript-delete-workflow-runs">
+        <div v-if="isOpen" class="dialog-wrapper">
+            <div class="dialog">
+                <h1>
+                    {{ title }}
+                </h1>
+                <a :href="projectUrl" class="url">
+                    {{ projectUrl }}
+                </a>
+
+                <UserscriptAppSettings
+                    @close="isOpen = false"
+                />
+            </div>
+        </div>
+
+        <a
+            v-if="numDeletionsLeft > 0"
+            class="stop-btn"
+            :title="`${numDeletionsLeft} deletions left`"
+            @click="stopDeleting"
+        >
+            Stop
+        </a>
+        <a
+            v-else
+            class="start-btn"
+            @click="startDeleting"
+        >
+            Start
+        </a>
+
+        <a
+            class="settings-btn"
+            :title="title"
+            @click="isOpen = true"
+        >
+            Settings
+        </a>
+    </div>
+</template>
 
 <style lang="scss">
 .userscript-delete-workflow-runs{
