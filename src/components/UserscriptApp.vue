@@ -3,6 +3,7 @@ import { ref, defineComponent, onMounted, computed } from 'vue'
 import UserscriptAppSettings from './UserscriptAppSettings.vue'
 import { useStore } from '@/store'
 import { deleteWorkflowRuns } from '@/services/github/deleteWorkflowRuns'
+import { isOnWorkflowsPage } from '@/utils/isOnWorkflowsPage'
 
 export default defineComponent({
     components: {
@@ -39,8 +40,9 @@ export default defineComponent({
 
         return {
             title: `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`,
-            projectUrl: DEFINE.REPO.url,
             isOpen: ref(false),
+            isOnWorkflowsPage: isOnWorkflowsPage(window.location),
+
             numDeletionsLeft,
             stopDeleting,
             startDeleting,
@@ -50,7 +52,10 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="userscript-delete-workflow-runs">
+    <div
+        v-if="isOnWorkflowsPage"
+        class="userscript-delete-workflow-runs"
+    >
         <div
             v-if="isOpen"
             class="dialog-wrapper"

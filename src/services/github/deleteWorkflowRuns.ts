@@ -1,12 +1,6 @@
-import { isOnWorkflowsPage } from '@/utils/isOnWorkflowsPage'
 import { waitForSelector } from '@/utils/waitForSelector'
 
 export async function deleteWorkflowRuns(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>): Promise<void> {
-    if (!isOnWorkflowsPage(window.location)) {
-        console.warn(DEFINE.NAME, 'Not on workflows page')
-        return
-    }
-
     const container = document.querySelector('#partial-actions-workflow-runs')
     if (!container) {
         throw new Error('Cannot find container')
