@@ -1,5 +1,5 @@
-import { KEY_STATE } from '@/Constants'
 import { defineStore } from 'pinia'
+import { KEY_STATE } from '@/Constants'
 
 // ----------------------------------------------------------------------------
 // State

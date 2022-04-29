@@ -1,9 +1,9 @@
 <script lang="ts">
 import { ref, defineComponent, onMounted, computed } from 'vue'
-import UserscriptAppSettings from './UserscriptAppSettings.vue'
-import { useStore } from '@/store'
 import { deleteWorkflowRuns } from '@/services/github/deleteWorkflowRuns'
+import { useStore } from '@/store'
 import { isOnWorkflowsPage } from '@/utils/isOnWorkflowsPage'
+import UserscriptAppSettings from './UserscriptAppSettings.vue'
 
 export default defineComponent({
     components: {
