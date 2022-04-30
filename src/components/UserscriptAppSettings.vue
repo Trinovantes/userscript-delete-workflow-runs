@@ -65,7 +65,7 @@ export default defineComponent({
             <div class="hspace" />
             <a
                 class="btn"
-                @click="$emit('close')"
+                @click="store.load(); $emit('close')"
             >
                 Cancel
             </a>
