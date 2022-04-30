@@ -1,3 +1,5 @@
+export const TITLE = `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`
+
 export const KEY_STATE = 'KEY_STATE'
 
 export const MAX_CHECKING_SELECTOR_ATTEMPTS = 5
