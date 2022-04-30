@@ -1,27 +1,11 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import { TITLE } from '@/Constants'
 import { useStore } from '@/store'
 
-export default defineComponent({
-    emits: [
-        'close',
-    ],
+defineEmits(['close'])
 
-    setup() {
-        const store = useStore()
-        const save = async() => {
-            await store.save()
-        }
-
-        return {
-            TITLE,
-            projectUrl: DEFINE.REPO.url,
-            store,
-            save,
-        }
-    },
-})
+const projectUrl = DEFINE.REPO.url
+const store = useStore()
 </script>
 
 <template>
@@ -58,7 +42,7 @@ export default defineComponent({
         <div class="group actions">
             <a
                 class="btn positive"
-                @click="save(); $emit('close')"
+                @click="store.save(); $emit('close')"
             >
                 Save
             </a>

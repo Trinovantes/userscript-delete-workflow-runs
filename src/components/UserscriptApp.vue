@@ -1,62 +1,45 @@
-<script lang="ts">
-import { ref, defineComponent, onMounted, computed } from 'vue'
+<script lang="ts" setup>
+import { ref, onMounted, computed } from 'vue'
 import { TITLE } from '@/Constants'
 import { deleteWorkflowRuns } from '@/services/github/deleteWorkflowRuns'
 import { useStore } from '@/store'
 import { isOnWorkflowsPage } from '@/utils/isOnWorkflowsPage'
 import UserscriptAppSettings from './UserscriptAppSettings.vue'
 
-export default defineComponent({
-    components: {
-        UserscriptAppSettings,
-    },
+const store = useStore()
+const numDeletionsLeft = computed(() => store.numDeletionsLeft)
+const run = async() => {
+    if (numDeletionsLeft.value < 1) {
+        console.info(DEFINE.NAME, 'No runs left to run')
+        return
+    }
 
-    setup() {
-        const store = useStore()
-        const numDeletionsLeft = computed(() => store.numDeletionsLeft)
-        const run = async() => {
-            if (numDeletionsLeft.value < 1) {
-                console.info(DEFINE.NAME, 'No runs left to run')
-                return
-            }
+    await deleteWorkflowRuns(store.numWorkflowRunsToKeep, async() => {
+        store.numDeletionsLeft = numDeletionsLeft.value - 1
+        await store.save()
+    })
+}
 
-            await deleteWorkflowRuns(store.numWorkflowRunsToKeep, async() => {
-                store.numDeletionsLeft = numDeletionsLeft.value - 1
-                await store.save()
-            })
-        }
+const stopDeleting = async() => {
+    store.numDeletionsLeft = 0
+    await store.save()
+}
 
-        const stopDeleting = async() => {
-            store.numDeletionsLeft = 0
-            await store.save()
-        }
+const startDeleting = async() => {
+    store.numDeletionsLeft = store.numDeletionsPerExecution
+    await store.save()
+    await run()
+}
 
-        const startDeleting = async() => {
-            store.numDeletionsLeft = store.numDeletionsPerExecution
-            await store.save()
-            await run()
-        }
+onMounted(run)
 
-        onMounted(run)
-
-        const loadApp = ref(isOnWorkflowsPage(window.location.href))
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        window.history.pushState = new Proxy(window.history.pushState, {
-            apply: (target, thisArg, argArray: [unknown, string, string]) => {
-                loadApp.value = isOnWorkflowsPage(argArray[2])
-                return target.apply(thisArg, argArray)
-            },
-        })
-
-        return {
-            TITLE,
-            isOpen: ref(false),
-            loadApp,
-
-            numDeletionsLeft,
-            stopDeleting,
-            startDeleting,
-        }
+const isOpen = ref(false)
+const loadApp = ref(isOnWorkflowsPage(window.location.href))
+// eslint-disable-next-line @typescript-eslint/unbound-method
+window.history.pushState = new Proxy(window.history.pushState, {
+    apply: (target, thisArg, argArray: [unknown, string, string]) => {
+        loadApp.value = isOnWorkflowsPage(argArray[2])
+        return target.apply(thisArg, argArray)
     },
 })
 </script>
