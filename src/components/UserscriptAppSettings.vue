@@ -125,6 +125,7 @@ label{
     display: grid;
     gap: math.div($padding, 2);
     grid-template-columns: 1fr 2fr;
+    justify-items: left;
 }
 
 input{
@@ -136,6 +137,10 @@ input{
 
     &:focus{
         border-color: black;
+    }
+
+    &:not([type='checkbox']){
+        width: 100%;
     }
 }
 
