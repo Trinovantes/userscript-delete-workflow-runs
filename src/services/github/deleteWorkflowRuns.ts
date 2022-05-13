@@ -1,11 +1,7 @@
 import { waitForSelector } from '@/utils/waitForSelector'
 
 export async function deleteWorkflowRuns(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>): Promise<void> {
-    const container = document.querySelector('#partial-actions-workflow-runs')
-    if (!container) {
-        throw new Error('Cannot find container')
-    }
-
+    const container = await waitForSelector(document, '#partial-actions-workflow-runs')
     const actionBtns = container.querySelectorAll('summary.timeline-comment-action')
     let i = 0
 
@@ -31,13 +27,9 @@ async function deleteWorkflowRun(actionBtn: HTMLButtonElement, onBeforeDelete?: 
     console.info(DEFINE.NAME, 'Clicking actionBtn', actionBtn)
     actionBtn.click()
 
-    const menu = parent.querySelector('ul.dropdown-menu')
-    if (!menu) {
-        throw new Error('Cannot find drop down menu')
-    }
-
-    const deleteBtn = menu.querySelector('summary.menu-item-danger') as HTMLButtonElement | undefined
-    if (!deleteBtn || deleteBtn.innerText !== 'Delete workflow run') {
+    const menu = await waitForSelector(parent, 'ul.dropdown-menu')
+    const deleteBtn = await waitForSelector<HTMLButtonElement>(menu, 'summary.menu-item-danger')
+    if (deleteBtn.innerText !== 'Delete workflow run') {
         throw new Error('Cannot find delete workflow button')
     }
 
@@ -45,7 +37,7 @@ async function deleteWorkflowRun(actionBtn: HTMLButtonElement, onBeforeDelete?: 
     deleteBtn.click()
 
     const dialog = await waitForSelector(menu, 'details-dialog')
-    const confirmBtn = await waitForSelector(dialog, 'button.btn-danger') as HTMLButtonElement
+    const confirmBtn = await waitForSelector<HTMLButtonElement>(dialog, 'button.btn-danger')
     if (confirmBtn.innerText !== 'Yes, permanently delete this workflow run') {
         throw new Error('Cannot find confirmation btn in dialog')
     }
