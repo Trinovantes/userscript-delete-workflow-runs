@@ -3,19 +3,15 @@ import { waitForSelector } from '@/utils/waitForSelector'
 export async function deleteWorkflowRuns(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>): Promise<void> {
     const container = await waitForSelector(document, '#partial-actions-workflow-runs')
     const actionBtns = container.querySelectorAll('summary.timeline-comment-action')
-    let i = 0
 
-    for (const actionBtn of actionBtns) {
-        // Skip the first N runs to keep
-        i += 1
-        if (i <= numWorkflowRunsToKeep) {
-            console.info(DEFINE.NAME, `Skipping ${i}/${numWorkflowRunsToKeep}`, actionBtn)
-            continue
-        }
-
-        // Delete the N+1 run
-        return await deleteWorkflowRun(actionBtn as HTMLButtonElement, onBeforeDelete)
+    // Check if there is an N+1 btn
+    if (numWorkflowRunsToKeep >= actionBtns.length) {
+        console.info(DEFINE.NAME, `Not enough workflows:${actionBtns.length} numWorkflowRunsToKeep:${numWorkflowRunsToKeep}`)
+        return
     }
+
+    const actionBtn = actionBtns[numWorkflowRunsToKeep] as HTMLButtonElement
+    await deleteWorkflowRun(actionBtn, onBeforeDelete)
 }
 
 async function deleteWorkflowRun(actionBtn: HTMLButtonElement, onBeforeDelete?: () => Promise<void>): Promise<void> {
