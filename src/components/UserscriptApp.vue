@@ -86,8 +86,8 @@ window.history.pushState = new Proxy(window.history.pushState, {
     </div>
 </template>
 
-<style lang="scss">
-.userscript-delete-workflow-runs *{
+<style lang="scss" scoped>
+:global(.userscript-delete-workflow-runs *){
     background: none;
     outline: none;
     border: none;
@@ -101,9 +101,7 @@ window.history.pushState = new Proxy(window.history.pushState, {
     line-height: 1.5;
     vertical-align: baseline;
 }
-</style>
 
-<style lang="scss" scoped>
 a.stop-btn,
 a.start-btn,
 a.settings-btn{
