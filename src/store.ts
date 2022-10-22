@@ -5,7 +5,7 @@ import { KEY_STATE } from '@/Constants'
 // State
 // ----------------------------------------------------------------------------
 
-export interface State {
+export type State = {
     numWorkflowRunsToKeep: number
     numDeletionsPerExecution: number
     numDeletionsLeft: number
