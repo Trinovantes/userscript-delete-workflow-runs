@@ -1,6 +1,5 @@
-export const TITLE = `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`
+export const projectTitle = `${DEFINE.PRODUCT_NAME} ${DEFINE.VERSION}`
+export const projectUrl = DEFINE.REPO.url
 
-export const KEY_STATE = 'KEY_STATE'
-
-export const MAX_CHECKING_SELECTOR_ATTEMPTS = 5
-export const DELAY_BETWEEN_CHECKING_SELECTOR = 100 // ms
+export const UI_WAIT_TIME = 150
+export const MAX_UI_WAIT_ATTEMPTS = 5

@@ -1,25 +1,32 @@
 <script lang="ts" setup>
-import { TITLE } from '@/Constants'
-import { useStore } from '@/store'
+import { projectTitle, projectUrl } from '@/Constants'
+import { useStore } from '@/store/useStore'
 
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 
-const projectUrl = DEFINE.REPO.url
 const store = useStore()
+const save = async() => {
+    await store.save()
+    emit('close')
+}
+const cancel = async() => {
+    await store.load()
+    emit('close')
+}
 </script>
 
 <template>
-    <div class="settings">
-        <div class="group">
+    <article>
+        <div class="group header flex-vgap">
             <h1>
-                {{ TITLE }}
+                {{ projectTitle }}
             </h1>
             <a :href="projectUrl" class="project-url">
                 {{ projectUrl }}
             </a>
         </div>
 
-        <div class="group">
+        <div class="group flex-vgap">
             <label for="numWorkflowRunsToKeep">
                 Number of Workflow Runs to Keep
                 <input
@@ -39,117 +46,43 @@ const store = useStore()
             </label>
         </div>
 
-        <div class="group actions">
-            <a
-                class="btn positive"
-                @click="store.save(); $emit('close')"
+        <div class="group actions flex-hgap">
+            <button
+                class="positive"
+                @click="save"
             >
                 Save
-            </a>
-            <div class="hspace" />
-            <a
-                class="btn"
-                @click="store.load(); $emit('close')"
+            </button>
+            <div class="flex-1" />
+            <button
+                @click="cancel"
             >
                 Cancel
-            </a>
+            </button>
         </div>
-    </div>
+    </article>
 </template>
 
 <style lang="scss" scoped>
-.settings{
+article{
     display: grid;
-    gap: $padding;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .group{
-    display: grid;
-    gap: math.div($padding, 2);
+    padding: $padding;
 
     &:not(:first-child){
         border-top: $border;
-        padding-top: $padding;
     }
 
-    &.actions{
-        display: flex;
+    &.header{
         gap: math.div($padding, 2);
-
-        .hspace{
-            flex: 1;
-        }
-    }
-}
-
-h1{
-    font-size: 24px;
-    font-weight: bold;
-}
-
-h2{
-    font-size: 21px;
-    font-weight: bold;
-}
-
-a.project-url{
-    display: block;
-    color: blue;
-    text-decoration: none;
-
-    &:hover{
-        text-decoration: underline;
     }
 }
 
 label{
-    cursor: pointer;
     font-weight: bold;
-
-    align-items: center;
-    display: grid;
-    gap: math.div($padding, 2);
-    grid-template-columns: 1fr 2fr;
-    justify-items: left;
-}
-
-input{
-    font-weight: normal;
-
-    border: $border;
-    border-radius: $border-radius;
-    padding: math.div($padding, 4);
-
-    &:focus{
-        border-color: black;
-    }
-
-    &:not([type='checkbox']){
-        width: 100%;
-    }
-}
-
-a.btn{
-    background-color: white;
-    border: $border;
-    border-radius: $border-radius;
-    cursor: pointer;
-    display: inline-block;
-    padding: math.div($padding, 4) math.div($padding, 2);
-    text-decoration: none;
-
-    &:hover{
-        background-color: #eee;
-    }
-
-    &.positive{
-        background-color: green;
-        border-color: darkgreen;
-        color: white;
-
-        &:hover{
-            background-color: darkgreen;
-        }
-    }
 }
 </style>

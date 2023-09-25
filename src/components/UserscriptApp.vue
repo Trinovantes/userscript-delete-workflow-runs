@@ -1,155 +1,109 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
-import { TITLE } from '@/Constants'
-import { deleteWorkflowRuns } from '@/services/github/deleteWorkflowRuns'
-import { useStore } from '@/store'
-import { isOnWorkflowsPage } from '@/utils/isOnWorkflowsPage'
+import { ref, onMounted } from 'vue'
+import { projectTitle } from '@/Constants'
+import { useStore } from '@/store/useStore'
+import { useIsOnWorkflowsPage } from '@/utils/useIsOnWorkflowsPage'
 import UserscriptAppSettings from './UserscriptAppSettings.vue'
 
+/**
+ * Whenever a workflow is deleted (e.g. clicking confirm button), the page will refresh
+ * As a result, whenever we are mounted, we need to check if there are pending work and run if necessary
+ */
 const store = useStore()
-const numDeletionsLeft = computed(() => store.numDeletionsLeft)
-const run = async() => {
-    if (numDeletionsLeft.value < 1) {
-        console.info(DEFINE.NAME, 'No runs left to run')
+onMounted(async() => {
+    if (!isOnWorkflowsPage.value) {
         return
     }
 
-    await deleteWorkflowRuns(store.numWorkflowRunsToKeep, async() => {
-        store.numDeletionsLeft = numDeletionsLeft.value - 1
-        await store.save()
-    })
-}
-
-const stopDeleting = async() => {
-    store.numDeletionsLeft = 0
-    await store.save()
-}
-
-const startDeleting = async() => {
-    store.numDeletionsLeft = store.numDeletionsPerExecution
-    await store.save()
-    await run()
-}
-
-onMounted(run)
-
-const isOpen = ref(false)
-const loadApp = ref(isOnWorkflowsPage(window.location.href))
-// eslint-disable-next-line @typescript-eslint/unbound-method
-window.history.pushState = new Proxy(window.history.pushState, {
-    apply: (target, thisArg, argArray: [unknown, string, string]) => {
-        loadApp.value = isOnWorkflowsPage(argArray[2])
-        return target.apply(thisArg, argArray)
-    },
+    await store.runPendingWork()
 })
+
+const { isOnWorkflowsPage } = useIsOnWorkflowsPage()
+const dialogRef = ref<HTMLDialogElement | null>(null)
 </script>
 
 <template>
     <div
-        v-if="loadApp"
+        v-if="isOnWorkflowsPage"
         class="userscript-delete-workflow-runs"
     >
-        <div
-            v-if="isOpen"
-            class="dialog-wrapper"
+        <dialog
+            ref="dialogRef"
         >
-            <div class="dialog">
-                <UserscriptAppSettings
-                    @close="isOpen = false"
-                />
-            </div>
-        </div>
+            <UserscriptAppSettings
+                @close="dialogRef?.close()"
+            />
+        </dialog>
 
-        <a
-            v-if="numDeletionsLeft > 0"
+        <button
+            v-if="store.numDeletionsLeft > 0"
             class="stop-btn"
-            :title="`${numDeletionsLeft} deletions left`"
-            @click="stopDeleting"
+            :title="`${store.numDeletionsLeft} deletions left`"
+            @click="store.stopDeleting()"
         >
             Stop
-        </a>
-        <a
+        </button>
+        <button
             v-else
             class="start-btn"
-            @click="startDeleting"
+            @click="store.startDeleting()"
         >
             Start
-        </a>
+        </button>
 
-        <a
+        <button
             class="settings-btn"
-            :title="TITLE"
-            @click="isOpen = true"
+            :title="projectTitle"
+            @click="dialogRef?.showModal()"
         >
             Settings
-        </a>
+        </button>
     </div>
 </template>
 
 <style lang="scss" scoped>
-:global(.userscript-delete-workflow-runs *){
-    background: none;
-    outline: none;
-    border: none;
-    margin: 0;
-    padding: 0;
-
-    color: #111;
-    font-size: 15px;
-    font-weight: normal;
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.5;
-    vertical-align: baseline;
-}
-
-a.stop-btn,
-a.start-btn,
-a.settings-btn{
-    @extend .icon-btn;
+button.stop-btn,
+button.start-btn,
+button.settings-btn{
+    background-image: url('@/assets/img/settings.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50% 50%;
+    border-radius: 50%;
+    border: $border;
+    cursor: pointer;
+    display: block;
+    overflow: hidden;
+    text-decoration: none;
+    text-indent: -9999px;
+    transition: 0.25s;
+    width: $btn-size; height: $btn-size;
 
     position: fixed;
-    right: $padding;
     z-index: 9999;
+    right: $padding;
 
+    background-color: white;
     box-shadow: rgba(11, 11, 11, 0.1) 0 2px 8px;
 
     &:hover{
+        background-color: #eee;
         box-shadow: rgba(11, 11, 11, 0.4) 0 0px 8px;
     }
 }
 
-a.stop-btn{
+button.stop-btn{
     background-image: url('@/assets/img/stop.png');
     bottom: $padding + $btn-size + $padding + $btn-size + $padding;
 }
 
-a.start-btn{
+button.start-btn{
     background-image: url('@/assets/img/start.png');
     bottom: $padding + $btn-size + $padding + $btn-size + $padding;
 }
 
-a.settings-btn{
+button.settings-btn{
     background-image: url('@/assets/img/settings.png');
     bottom: $padding + $btn-size + $padding;
-}
-
-.dialog-wrapper{
-    background: rgba(11, 11, 11, 0.4);
-
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 99999;
-
-    > .dialog{
-        background: white;
-        padding: $padding;
-        border-radius: $border-radius;
-
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translateY(-50%) translateX(-50%);
-        min-width: $min-dialog-width;
-    }
 }
 </style>

@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
-import { KEY_STATE } from '@/Constants'
+import { deleteWorkflowRun } from '@/utils/deleteWorkflowRun'
+
+const HYDRATION_KEY = 'KEY_STATE'
 
 // ----------------------------------------------------------------------------
 // State
@@ -31,7 +33,7 @@ export const useStore = defineStore('Store', {
     actions: {
         async load() {
             try {
-                const stateString = await GM.getValue(KEY_STATE, '{}') || '{}'
+                const stateString = await GM.getValue(HYDRATION_KEY, '{}') || '{}'
                 const parsedState = JSON.parse(stateString) as State
                 this.$patch(parsedState)
 
@@ -44,10 +46,40 @@ export const useStore = defineStore('Store', {
         async save() {
             try {
                 const stateString = JSON.stringify(this.$state)
-                await GM.setValue(KEY_STATE, stateString)
+                await GM.setValue(HYDRATION_KEY, stateString)
                 console.info(DEFINE.NAME, 'Store::save', `'${stateString}'`)
             } catch (err) {
                 console.warn(DEFINE.NAME, err)
+            }
+        },
+
+        async startDeleting() {
+            console.info(DEFINE.NAME, 'Store::startDeleting')
+            this.numDeletionsLeft = this.numDeletionsPerExecution
+            await this.save()
+            await this.runPendingWork()
+        },
+
+        async stopDeleting() {
+            console.info(DEFINE.NAME, 'Store::stopDeleting')
+            this.numDeletionsLeft = 0
+            await this.save()
+        },
+
+        async runPendingWork() {
+            console.info(DEFINE.NAME, 'Store::runPendingWork', this.numDeletionsLeft)
+
+            if (this.numDeletionsLeft < 1) {
+                return
+            }
+
+            const finished = await deleteWorkflowRun(this.numWorkflowRunsToKeep, async() => {
+                this.numDeletionsLeft -= 1
+                await this.save()
+            })
+
+            if (finished) {
+                this.numDeletionsLeft = 0
             }
         },
     },

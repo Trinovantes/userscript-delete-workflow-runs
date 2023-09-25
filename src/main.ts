@@ -1,24 +1,19 @@
-import { createPinia } from 'pinia'
-import { createApp } from 'vue'
-import UserscriptApp from '@/components/UserscriptApp.vue'
-import { useStore } from './store'
+import './assets/css/main.scss'
+import { createVueApp } from './createVueApp'
 
 async function main() {
-    await $.when($.ready)
+    const node = document.createElement('div')
+    node.id = DEFINE.NAME
+    document.querySelector('body')?.appendChild(node)
 
-    const appContainerId = DEFINE.NAME
-    $('body').append(`<div id="${appContainerId}">`)
-
-    const app = createApp(UserscriptApp)
-    const pinia = createPinia()
-    app.use(pinia)
-
-    const store = useStore()
-    await store.load()
-
-    app.mount(`#${appContainerId}`)
+    const app = await createVueApp()
+    app.mount(node)
 }
 
-main().catch((err) => {
-    console.warn(DEFINE.NAME, err)
-})
+if (document.readyState !== 'loading') {
+    void main()
+} else {
+    window.addEventListener('DOMContentLoaded', () => {
+        void main()
+    })
+}
