@@ -33,7 +33,7 @@ export const useStore = defineStore('Store', {
     actions: {
         async load() {
             try {
-                const stateString = await GM.getValue(HYDRATION_KEY, '{}') || '{}'
+                const stateString = await GM.getValue(HYDRATION_KEY, '{}')
                 const parsedState = JSON.parse(stateString) as State
                 this.$patch(parsedState)
 
