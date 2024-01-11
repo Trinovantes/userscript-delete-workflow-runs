@@ -20,16 +20,16 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
     clickBtn('actionBtn', actionBtn)
 
     const menu = await findDelayedElement('ul.dropdown-menu', actionContainer)
-    const deleteBtn = await findDelayedElement('summary.menu-item-danger', menu)
+    const deleteBtn = await findDelayedElement('button.menu-item-danger', menu)
     if (deleteBtn.innerText !== 'Delete workflow run') {
         throw new Error('Cannot find delete workflow button')
     }
 
     clickBtn('deleteBtn', deleteBtn)
 
-    const dialog = await findDelayedElement('details-dialog', menu)
-    const confirmBtn = await findDelayedElement('button.btn-danger', dialog)
-    if (confirmBtn.innerText !== 'Yes, permanently delete this workflow run') {
+    const dialog = await findDelayedElement('modal-dialog', menu)
+    const confirmBtn = await findDelayedElement('button.Button--danger', dialog)
+    if (confirmBtn.innerText !== 'Yes, delete this workflow run') {
         throw new Error('Cannot find confirmation btn in dialog')
     }
 
