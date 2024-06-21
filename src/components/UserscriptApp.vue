@@ -10,6 +10,7 @@ import UserscriptAppSettings from './UserscriptAppSettings.vue'
  * As a result, whenever we are mounted, we need to check if there are pending work and run if necessary
  */
 const store = useStore()
+const { isOnWorkflowsPage } = useIsOnWorkflowsPage()
 onMounted(async() => {
     if (!isOnWorkflowsPage.value) {
         return
@@ -18,7 +19,6 @@ onMounted(async() => {
     await store.runPendingWork()
 })
 
-const { isOnWorkflowsPage } = useIsOnWorkflowsPage()
 const dialogRef = ref<HTMLDialogElement | null>(null)
 </script>
 
