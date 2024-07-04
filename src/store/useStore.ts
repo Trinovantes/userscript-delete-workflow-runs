@@ -73,6 +73,7 @@ export const useStore = defineStore('Store', {
                 return
             }
 
+            // This will return when there's more deletions queued than workflows left
             const finished = await deleteWorkflowRun(this.numWorkflowRunsToKeep, async() => {
                 this.numDeletionsLeft -= 1
                 await this.save()
@@ -80,6 +81,7 @@ export const useStore = defineStore('Store', {
 
             if (finished) {
                 this.numDeletionsLeft = 0
+                await this.save()
             }
         },
     },
