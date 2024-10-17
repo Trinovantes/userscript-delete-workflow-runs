@@ -1,4 +1,6 @@
+import { UI_WAIT_TIME } from '@/Constants'
 import { findDelayedElement } from './findDelayedElement'
+import { sleep } from './sleep'
 
 export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>) {
     const container = await findDelayedElement('#partial-actions-workflow-runs')
@@ -17,7 +19,7 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
         throw new Error('Cannot find parent of actionBtn')
     }
 
-    clickBtn('actionBtn', actionBtn)
+    await clickBtn('actionBtn', actionBtn)
 
     const menu = await findDelayedElement('ul.dropdown-menu', actionContainer)
     const deleteBtn = await findDelayedElement('button.menu-item-danger', menu)
@@ -25,7 +27,9 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
         throw new Error('Cannot find delete workflow button')
     }
 
-    clickBtn('deleteBtn', deleteBtn)
+    await clickBtn('deleteBtn', deleteBtn, () => {
+        return menu.querySelector('dialog[open]') === null
+    })
 
     const dialog = await findDelayedElement('dialog[open]', menu)
     const confirmBtn = await findDelayedElement('button.Button--danger', dialog)
@@ -37,13 +41,23 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
     // This will run any cleanup tasks before page gets refreshed
     await onBeforeDelete?.()
 
-    clickBtn('confirmBtn', confirmBtn)
+    await clickBtn('confirmBtn', confirmBtn)
     return false
 }
 
-function clickBtn(btnName: string, btn: HTMLElement) {
+async function clickBtn(btnName: string, btn: HTMLElement, shouldRetry?: () => boolean) {
     console.groupCollapsed(DEFINE.NAME, 'Clicking', btnName)
-    console.info(btn)
-    btn.click()
+
+    if (shouldRetry) {
+        do {
+            console.info(btn)
+            btn.click()
+            await sleep(UI_WAIT_TIME)
+        } while (shouldRetry())
+    } else {
+        console.info(btn)
+        btn.click()
+    }
+
     console.groupEnd()
 }
