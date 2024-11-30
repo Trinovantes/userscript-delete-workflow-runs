@@ -10,16 +10,18 @@ import vueParser from 'vue-eslint-parser'
 import { readFileSync } from 'node:fs'
 import { includeIgnoreFile } from '@eslint/compat'
 import path from 'node:path'
+import { defineConfig } from 'eslint/config'
 
 const inlineElementsJson = readFileSync('node_modules/eslint-plugin-vue/lib/utils/inline-non-void-elements.json').toString('utf-8')
 const inlineElements = JSON.parse(inlineElementsJson)
 
-export default tseslint.config(
+export default defineConfig(
     includeIgnoreFile(path.resolve('.gitignore')),
 
     {
         ignores: [
             '**/raw/**/*',
+            'libs',
         ],
     },
 
@@ -36,18 +38,22 @@ export default tseslint.config(
     // MARK: Style
     // ------------------------------------------------------------------------
 
-    // @ts-ignore
-    stylistic.configs['recommended-flat'],
+    stylistic.configs['recommended'],
     {
         rules: {
             '@stylistic/brace-style': ['error', '1tbs'],
             '@stylistic/quotes': ['error', 'single', {
                 avoidEscape: true,
-                allowTemplateLiterals: false,
+                allowTemplateLiterals: 'avoidEscape',
             }],
             '@stylistic/generator-star-spacing': ['error', 'before'],
             '@stylistic/arrow-parens': ['error', 'always'],
-            '@stylistic/space-before-function-paren': ['error', 'never'],
+            '@stylistic/space-before-function-paren': ['error', {
+                anonymous: 'never',
+                named: 'never',
+                asyncArrow: 'always',
+                catch: 'always',
+            }],
             '@stylistic/indent': ['error', 4, {
                 SwitchCase: 1,
             }],
@@ -74,8 +80,11 @@ export default tseslint.config(
                 overrides: {
                     '?': 'before',
                     ':': 'before',
+                    '&': 'before',
+                    '|': 'before',
                 },
             }],
+            '@stylistic/object-curly-spacing': ['error', 'always'],
         },
     },
 
@@ -197,6 +206,7 @@ export default tseslint.config(
             '@typescript-eslint/require-array-sort-compare': ['error', {
                 ignoreStringArrays: true,
             }],
+            '@typescript-eslint/no-import-type-side-effects': 'error',
         },
     },
 
@@ -217,7 +227,6 @@ export default tseslint.config(
     // MARK: Vue
     // ------------------------------------------------------------------------
 
-    // @ts-expect-error Vue plugin is not properly typed
     ...pluginVue.configs['flat/strongly-recommended'],
 
     {
@@ -227,7 +236,7 @@ export default tseslint.config(
                 singleline: 999,
                 multiline: 1,
             }],
-            'vue/component-tags-order': ['error', {
+            'vue/block-order': ['error', {
                 order: ['script', 'template', 'style'],
             }],
             'vue/singleline-html-element-content-newline': ['error', {

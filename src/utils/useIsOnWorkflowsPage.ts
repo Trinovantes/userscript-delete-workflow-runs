@@ -8,7 +8,7 @@ export function useIsOnWorkflowsPage() {
     window.history.pushState = new Proxy(window.history.pushState, {
         apply: (target, thisArg, argArray: [unknown, string, string]) => {
             isOnWorkflowsPage.value = re.test(argArray[2])
-            console.info(DEFINE.NAME, 'useIsOnWorkflowsPage', isOnWorkflowsPage.value)
+            console.info(__NAME__, 'useIsOnWorkflowsPage', isOnWorkflowsPage.value)
             target.apply(thisArg, argArray)
         },
     })
