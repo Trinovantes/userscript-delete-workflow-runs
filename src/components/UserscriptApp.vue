@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { projectTitle } from '@/Constants'
-import { useStore } from '@/store/useStore'
-import { useIsOnWorkflowsPage } from '@/utils/useIsOnWorkflowsPage'
+import { projectTitle } from '../Constants.ts'
+import { useStore } from '../store/useStore.ts'
+import { useIsOnWorkflowsPage } from '../utils/useIsOnWorkflowsPage.ts'
 import UserscriptAppSettings from './UserscriptAppSettings.vue'
 
 /**
@@ -11,7 +11,7 @@ import UserscriptAppSettings from './UserscriptAppSettings.vue'
  */
 const store = useStore()
 const { isOnWorkflowsPage } = useIsOnWorkflowsPage()
-onMounted(async() => {
+onMounted(async () => {
     if (!isOnWorkflowsPage.value) {
         return
     }
@@ -65,7 +65,7 @@ const dialogRef = ref<HTMLDialogElement | null>(null)
 button.stop-btn,
 button.start-btn,
 button.settings-btn{
-    background-image: url('@/assets/img/settings.png');
+    background-image: url('@img/settings.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: 50% 50%;
@@ -93,17 +93,17 @@ button.settings-btn{
 }
 
 button.stop-btn{
-    background-image: url('@/assets/img/stop.png');
+    background-image: url('@img/stop.png');
     bottom: $padding + $btn-size + $padding + $btn-size + $padding;
 }
 
 button.start-btn{
-    background-image: url('@/assets/img/start.png');
+    background-image: url('@img/start.png');
     bottom: $padding + $btn-size + $padding + $btn-size + $padding;
 }
 
 button.settings-btn{
-    background-image: url('@/assets/img/settings.png');
+    background-image: url('@img/settings.png');
     bottom: $padding + $btn-size + $padding;
 }
 </style>

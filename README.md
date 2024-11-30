@@ -19,7 +19,7 @@ By default, this userscript will keep the first (i.e. the latest) workflow run. 
 1. Install prereqs
 
     * `node`
-    * `yarn`
+    * `pnpm`
     * Tampermonkey on Chrome
 
 2. In Chrome:
@@ -31,8 +31,8 @@ By default, this userscript will keep the first (i.e. the latest) workflow run. 
 3. Run dev server
 
     ```
-    yarn install
-    yarn dev
+    pnpm install
+    pnpm dev
     ```
 
 4. In Chrome:

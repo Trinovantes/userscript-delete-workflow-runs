@@ -1,6 +1,6 @@
-import { UI_WAIT_TIME } from '@/Constants'
-import { findDelayedElement } from './findDelayedElement'
-import { sleep } from './sleep'
+import { UI_WAIT_TIME } from '../Constants.ts'
+import { findDelayedElement } from './findDelayedElement.ts'
+import { sleep } from './sleep.ts'
 
 export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeDelete?: () => Promise<void>) {
     const container = await findDelayedElement('#partial-actions-workflow-runs')
@@ -9,7 +9,7 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
     // Check if there is an N+1 btn
     const numWorkflows = actionBtns.length
     if (numWorkflowRunsToKeep >= numWorkflows) {
-        console.info(DEFINE.NAME, `Finished numWorkflows:${numWorkflows} numWorkflowRunsToKeep:${numWorkflowRunsToKeep}`)
+        console.info(__NAME__, `Finished numWorkflows:${numWorkflows} numWorkflowRunsToKeep:${numWorkflowRunsToKeep}`)
         return true
     }
 
@@ -46,7 +46,7 @@ export async function deleteWorkflowRun(numWorkflowRunsToKeep: number, onBeforeD
 }
 
 async function clickBtn(btnName: string, btn: HTMLElement, shouldRetry?: () => boolean) {
-    console.groupCollapsed(DEFINE.NAME, 'Clicking', btnName)
+    console.groupCollapsed(__NAME__, 'Clicking', btnName)
 
     if (shouldRetry) {
         do {
