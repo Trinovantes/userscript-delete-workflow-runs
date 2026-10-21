@@ -54,7 +54,7 @@ export const useStore = defineStore('Store', {
         },
 
         async startDeleting() {
-            console.info(__NAME__, 'Store::startDeleting')
+            console.info(__NAME__, 'Store::startDeleting', this.numDeletionsPerExecution)
             this.numDeletionsLeft = this.numDeletionsPerExecution
             await this.save()
             await this.runPendingWork()
@@ -69,19 +69,25 @@ export const useStore = defineStore('Store', {
         async runPendingWork() {
             console.info(__NAME__, 'Store::runPendingWork', this.numDeletionsLeft)
 
-            if (this.numDeletionsLeft < 1) {
+            if (this.numDeletionsLeft <= 0) {
                 return
             }
 
-            // This will return when there's more deletions queued than workflows left
-            const finished = await deleteWorkflowRun(this.numWorkflowRunsToKeep, async () => {
+            const hasDeleted = await deleteWorkflowRun(this.numWorkflowRunsToKeep)
+
+            if (hasDeleted) {
+                // If it deleted a run, then we subtract it from pending work
                 this.numDeletionsLeft -= 1
                 await this.save()
-            })
-
-            if (finished) {
+            } else {
+                // If it didn't delete anything, then it means we finished early
                 this.numDeletionsLeft = 0
                 await this.save()
+            }
+
+            // Refresh page to reset page state
+            if (this.numDeletionsLeft > 0) {
+                window.location.reload()
             }
         },
     },
